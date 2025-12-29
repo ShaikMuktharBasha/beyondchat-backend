@@ -6,6 +6,7 @@ const bodyParser = require('body-parser'); // Parse JSON request bodies
 const mongoose = require('mongoose');
 const articlesRouter = require('./articles'); // Routes for article CRUD operations
 const { scrapeArticles } = require('./scraper'); // Scraping function
+const { updateArticles } = require('./updater'); // AI Updater function
 const { connectDB } = require('./database'); // DB connection
 
 // Initialize Express app
@@ -36,6 +37,16 @@ app.use('/api/articles', articlesRouter); // Mount article routes
 app.post('/api/scrape', async (req, res) => {
   await scrapeArticles(); // Run scraping function
   res.json({ message: 'Scraping completed' });
+});
+
+// Route to trigger AI updates (for Phase 2)
+app.post('/api/update-articles', async (req, res) => {
+  const result = await updateArticles();
+  if (result.success) {
+    res.json({ message: result.message });
+  } else {
+    res.status(500).json({ error: result.error });
+  }
 });
 
 // Start server

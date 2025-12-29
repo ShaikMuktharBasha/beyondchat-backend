@@ -115,11 +115,11 @@ async function updateArticles() {
       console.log(`Updated and published: ${article.title}`);
     }
     console.log('All articles processed.');
-    process.exit(0);
+    return { success: true, message: 'Articles updated successfully' };
   } catch (error) {
     console.error('Error updating articles:', error);
-    process.exit(1);
+    return { success: false, error: error.message };
   }
 }
 
-updateArticles();
+module.exports = { updateArticles };
