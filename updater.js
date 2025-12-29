@@ -9,12 +9,16 @@ require('dotenv').config();
 
 // Initialize OpenAI client with API key
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build' // Prevent build failure if key is missing
 });
 
 // Main function to update articles
 async function updateArticles() {
   console.log('Starting updater script...');
+
+  if (!process.env.OPENAI_API_KEY) {
+    console.warn('OPENAI_API_KEY is missing. AI generation will fail or use mock.');
+  }
   
   // Wait for DB connection
   if (mongoose.connection.readyState === 0) {
@@ -23,8 +27,13 @@ async function updateArticles() {
 
   try {
     // Step 1: Fetch existing articles from DB directly
-    const articles = await Article.find({ status: 'original' }).limit(5); // Process only original articles
+    // Limit to 1 article per run to avoid Vercel timeout (10s limit)
+    const articles = await Article.find({ status: 'original' }).limit(1); 
     console.log(`Found ${articles.length} articles to process`);
+
+    if (articles.length === 0) {
+      return { success: true, message: 'No original articles found to update.' };
+    }
 
     // Step 2: Process each article
     for (const article of articles) {
