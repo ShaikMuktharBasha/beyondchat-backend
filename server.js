@@ -6,6 +6,7 @@ const bodyParser = require('body-parser'); // Parse JSON request bodies
 const mongoose = require('mongoose');
 const articlesRouter = require('./articles'); // Routes for article CRUD operations
 const { scrapeArticles } = require('./scraper'); // Scraping function
+const { connectDB } = require('./database'); // DB connection
 
 // Initialize Express app
 const app = express();
@@ -14,6 +15,12 @@ const PORT = 3000;
 // Middleware
 app.use(cors()); // Allow cross-origin requests
 app.use(bodyParser.json()); // Parse JSON bodies
+
+// Database Connection Middleware
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 
 // Routes
 app.get('/', (req, res) => {

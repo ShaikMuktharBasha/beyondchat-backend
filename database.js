@@ -14,7 +14,7 @@ const connectDB = async () => {
 };
 
 // Execute connection
-connectDB();
+// connectDB(); // Removed top-level execution for serverless compatibility
 
 // Define the Article schema
 const articleSchema = new mongoose.Schema({
@@ -32,4 +32,4 @@ const articleSchema = new mongoose.Schema({
 // Create the Article model
 const Article = mongoose.model('Article', articleSchema);
 
-module.exports = { Article };
+module.exports = { Article, connectDB };
