@@ -2,9 +2,19 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 // Connect to MongoDB Atlas
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch((err) => console.error('Error connecting to MongoDB Atlas:', err));
+const connectDB = async () => {
+  if (mongoose.connection.readyState === 0) {
+    try {
+      await mongoose.connect(process.env.MONGODB_URI);
+      console.log('Connected to MongoDB Atlas');
+    } catch (err) {
+      console.error('Error connecting to MongoDB Atlas:', err);
+    }
+  }
+};
+
+// Execute connection
+connectDB();
 
 // Define the Article schema
 const articleSchema = new mongoose.Schema({

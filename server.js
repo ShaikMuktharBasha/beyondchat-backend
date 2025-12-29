@@ -3,6 +3,7 @@
 const express = require('express'); // Web framework for Node.js
 const cors = require('cors'); // Enable CORS for frontend requests
 const bodyParser = require('body-parser'); // Parse JSON request bodies
+const mongoose = require('mongoose');
 const articlesRouter = require('./articles'); // Routes for article CRUD operations
 const { scrapeArticles } = require('./scraper'); // Scraping function
 
@@ -15,6 +16,13 @@ app.use(cors()); // Allow cross-origin requests
 app.use(bodyParser.json()); // Parse JSON bodies
 
 // Routes
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'Backend is running', 
+    dbStatus: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected' 
+  });
+});
+
 app.use('/api/articles', articlesRouter); // Mount article routes
 
 // Route to trigger scraping (for Phase 1)
